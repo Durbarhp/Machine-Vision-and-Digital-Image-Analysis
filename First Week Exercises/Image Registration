@@ -1,1 +1,33 @@
+% Load images
+imageA_original = imread('ex21a.tif');
+imageB_original = imread('ex21b.tif');
+J = imageB_original(:,:,1); 
+
+% Display original images
+figure;
+subplot(2,2,1); imshow(imageA_original); title('Image A - Original');
+subplot(2,2,2); imshow(J); title('Image B - Original');
+
+% Step 1: Define control points
+subplot(2,2,3); imshow(imageA_original); title('Select Control Points on Image A');
+ptsA = ginput(4); % Interactively select control points
+hold on; plot(ptsA(:,1), ptsA(:,2), 'ro');
+
+subplot(2,2,4); imshow(J); title('Select Control Points on Image B');
+ptsB = ginput(4); % Interactively select control points
+hold on; plot(ptsB(:,1), ptsB(:,2), 'ro');
+
+% Step 2: Find the transformation matrix
+tform = fitgeotrans(ptsB, ptsA, 'affine');
+
+% Step 3: Apply transformation to input image
+registeredImage = imwarp(J, tform, 'OutputView', imref2d(size(imageA_original)));
+
+% Display results
+figure;
+subplot(1,3,1); imshow(imageA_original); title('Image A - Original');
+subplot(1,3,2); imshow(J); title('Image B - Original');
+subplot(1,3,3); imshowpair(imageA_original, registeredImage, 'blend'); title('Image B Registered to A');
+
+
 
